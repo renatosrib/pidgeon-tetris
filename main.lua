@@ -7,51 +7,52 @@ BORDA_ESQUERDA = 0
 velocidade = 2
 
 --Informações de posição em relação ao pombo
-posx = 300
-posy = 15
-angulo = 0
-tam = 1
-offset = 0
-direcao = DIREITA
+pombo = {
+  pombo = null,
+  posx = 300,
+  posy = 15,
+  angulo = 0,
+  tamanho = 1,
+  offset = 0,
+  direcao = DIREITA
+}
+
 
 --Frames
 dtg = 0
 
-
-
-
+--Variaveis de controle do jogo
 
 function love.load()
   BORDA_DIREITA = love.graphics.getWidth()
   pombo_direita = love.graphics.newImage( "imgs/rsz_pidgeon_right.jpg")
   pombo_esquerda = love.graphics.newImage( "imgs/rsz_pidgeon_left.jpg")
+  pombo.pombo = pombo_direita
 end
 
 function love.update( dt )
   dtg = dt
 
-  if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and direcao == DIREITA) then
-    posx = posx + velocidade
+  if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.direcao == DIREITA) then
+    pombo.posx = pombo.posx + velocidade
   else
-    posx = posx - velocidade
+    pombo.posx = pombo.posx - velocidade
   end
 
-  if (posx >= (BORDA_DIREITA - pombo_direita:getWidth()) and direcao == DIREITA) then
-    direcao = ESQUERDA
+  if (pombo.posx >= (BORDA_DIREITA - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
+    pombo.pombo = pombo_esquerda
+    pombo.direcao = ESQUERDA
   end
 
-  if (posx <= BORDA_ESQUERDA and direcao == ESQUERDA) then
-    direcao = DIREITA
+  if (pombo.posx <= BORDA_ESQUERDA and pombo.direcao == ESQUERDA) then
+    pombo.pombo = pombo_direita
+    pombo.direcao = DIREITA
   end
 
 end
 
 
 function love.draw()
-  if(direcao == DIREITA) then
-    love.graphics.draw(pombo_direita, posx, posy, angulo, tam, tam, offset, offset)
-  else
-    love.graphics.draw(pombo_esquerda, posx, posy, angulo, tam, tam, offset, offset)
-  end
+  love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
 
 end
