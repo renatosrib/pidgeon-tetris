@@ -136,36 +136,37 @@ function love.draw()
   --love.graphics.rectangle( mode, x, y, width, height )
   love.graphics.rectangle("line", 400, 100, 1, 600)
 	table.insert(tetris,tetris.pecas[4])
-  -- for key, value in pairs(tetris) do
-  -- 		for key2,number in pairs(value) do
-  -- 			for key3, number2 in pairs(number) do
-  -- 					if number2 == 1 then
-  -- 						love.graphics.setColor(tetris.cores[1])
-  -- 						love.graphics.rectangle("fill", 15  * key3, 15 * key2 , LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 2 then
-  -- 						love.graphics.setColor(tetris.cores[2])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15*key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 3 then
-  -- 						love.graphics.setColor(tetris.cores[3])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 4 then
-  -- 						love.graphics.setColor(tetris.cores[4])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 5 then
-  -- 						love.graphics.setColor(tetris.cores[5])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 6 then
-  -- 						love.graphics.setColor(tetris.cores[5])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					elseif number2 == 7 then
-  -- 						love.graphics.setColor(tetris.cores[5])
-  -- 						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
-  -- 					end
-  --
-  -- 			end
-  -- 		end
-  -- 	end
-    love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
+  love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
+  for key, value in pairs(tetris) do
+  		for key2,number in pairs(value) do
+  			for key3, number2 in pairs(number) do
+  					if number2 == 1 then
+  						love.graphics.setColor(tetris.cores[1])
+  						love.graphics.rectangle("fill", 15  * key3, 15 * key2 , LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 2 then
+  						love.graphics.setColor(tetris.cores[2])
+  						love.graphics.rectangle("fill", 15 * key3, 15*key2, LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 3 then
+  						love.graphics.setColor(tetris.cores[3])
+  						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 4 then
+  						love.graphics.setColor(tetris.cores[4])
+  						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 5 then
+  						love.graphics.setColor(tetris.cores[5])
+  						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 6 then
+  						love.graphics.setColor(tetris.cores[5])
+  						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
+  					elseif number2 == 7 then
+  						love.graphics.setColor(tetris.cores[5])
+  						love.graphics.rectangle("fill", 15 * key3, 15 * key2, LARGURA_PECA, ALTURA_PECA)
+  					end
+
+  			end
+  		end
+  	end
+
 
 
 end
