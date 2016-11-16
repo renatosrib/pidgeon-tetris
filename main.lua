@@ -12,7 +12,9 @@ GAME_GRID_TABELA = grid.Grid(LARGURA_TELA, ALTURA_TELA, 0)
 DIREITA = "direita"
 ESQUERDA = "esquerda"
 BORDA_DIRETA = 0
+BORDA_CENTRAL = 400
 BORDA_ESQUERDA = 0
+BORDA_PECAS = 8
 --incremento
 velocidade = 2
 GTETRIS = "TETRIS"
@@ -66,8 +68,8 @@ PLINV = {
 }
 
 tetris.pecas = {
-  F,
-  S,
+  PF,
+  PS,
   P5,
   PTRACO,
   PQUADRADO,
@@ -94,6 +96,63 @@ pombo = {
 
 --Frames
 dtg = 0
+
+function desenha_f(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,3)
+  GAME_GRID_TABELA:set_cell(x,y-1, 3)
+  GAME_GRID_TABELA:set_cell(x, y+1, 3)
+  GAME_GRID_TABELA:set_cell(x-1, y, 3)
+end
+
+function desenha_s(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,2)
+  GAME_GRID_TABELA:set_cell(x,y-1, 2)
+  GAME_GRID_TABELA:set_cell(x, y+1, 2)
+  GAME_GRID_TABELA:set_cell(x +1, y +1, 2)
+end
+
+function desenha_5(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,2)
+  GAME_GRID_TABELA:set_cell(x,y+1, 2)
+  GAME_GRID_TABELA:set_cell(x+1, y, 2)
+  GAME_GRID_TABELA:set_cell(x-1, y-1, 2)
+end
+
+function desenha_5(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,2)
+  GAME_GRID_TABELA:set_cell(x,y+1, 2)
+  GAME_GRID_TABELA:set_cell(x+1, y, 2)
+  GAME_GRID_TABELA:set_cell(x-1, y-1, 2)
+end
+
+function desenha_traco(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,3)
+  GAME_GRID_TABELA:set_cell(x,y-1, 3)
+  GAME_GRID_TABELA:set_cell(x, y-2, 3)
+  GAME_GRID_TABELA:set_cell(x, y+1, 3)
+end
+
+function desenha_quadrado(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,4)
+  GAME_GRID_TABELA:set_cell(x,y+1, 4)
+  GAME_GRID_TABELA:set_cell(x+1, y, 4)
+  GAME_GRID_TABELA:set_cell(x+1, y+1, 4)
+end
+
+function desenha_Pl(x, y)
+  GAME_GRID_TABELA:set_cell(x,y,5)
+  GAME_GRID_TABELA:set_cell(x,y+1, 5)
+  GAME_GRID_TABELA:set_cell(x, y-1, 5)
+  GAME_GRID_TABELA:set_cell(x+1, y+1, 5)
+end
+
+function desenha_plinv(x, y )
+  GAME_GRID_TABELA:set_cell(x,y,5)
+  GAME_GRID_TABELA:set_cell(x,y+1, 5)
+  GAME_GRID_TABELA:set_cell(x, y-1, 5)
+  GAME_GRID_TABELA:set_cell(x+1, y-1, 5)
+
+end
 
 --Variaveis de controle do jogo
 --[[tabela representa o local no qual as peças se posicionam...]]--
@@ -126,21 +185,44 @@ function love.load()
   for x in range(0, LARGURA_TELA/2) do
     GAME_GRID_TABELA:set_cell(x, ALTURA_TELA*0.3, "_")
   end
+  drawPieces()
 
-  GAME_GRID_TABELA:set_cell(1,10,3)
-  GAME_GRID_TABELA:set_cell(2,9,3)
-  GAME_GRID_TABELA:set_cell(2,10,3)
-  GAME_GRID_TABELA:set_cell(2,11,3)
 
 end
 
-function put_random_piece()
+function drawPieces()
+  for current in range(2, 20, 5) do
+    peca = tetris.pecas[math.random(1,7)]
+    if peca == tetris.pecas[1] then
+      desenha_f(BORDA_PECAS,current)
+    elseif peca == tetris.pecas[2] then
+      desenha_s(BORDA_PECAS, current)
+    elseif peca == tetris.pecas[3] then
+      desenha_5(BORDA_PECAS, current)
+    elseif peca == tetris.pecas[4] then
+      desenha_traco(BORDA_PECAS, current)
+    elseif peca == tetris.pecas[5] then
+      desenha_quadrado(BORDA_PECAS, current)
+    elseif peca == tetris.pecas[6] then
+      desenha_Pl(BORDA_PECAS, current)
+    elseif peca == tetris.pecas[7] then
+      desenha_Pl(BORDA_PECAS, current)
+    end
+
+  end
+end
+
+
+
+function get_random_piece()
+  return tetris.pecas[math.random(1,7)]
 end
 
 function love.update( dt )
   dtg = dt
   --Caso o usuário pressione espaço o pombo sobe um pouco
   if(love.keyboard.isDown("space")) then
+    efeito_queda_livre_peca()
     if(pombo.tempoPavaVoarNovamente == 0) then
       pombo.flyUp()
     end
@@ -156,7 +238,7 @@ function love.update( dt )
   end
 
   --Troca a direção do pombo para a esquerda caso ele alcance a borda direita
-  if (pombo.posx >= (BORDA_DIREITA - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
+  if (pombo.posx >= (BORDA_CENTRAL - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
     pombo.pombo = pombo_esquerda
     pombo.direcao = ESQUERDA
   end
@@ -165,7 +247,7 @@ function love.update( dt )
     pombo.pombo = pombo_direita
     pombo.direcao = DIREITA
   end
-  efeito_queda_livre_peca()
+
 end
 
 function efeito_queda_livre_peca()
@@ -184,9 +266,6 @@ end
 
 function love.draw()
   love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
-
-
-
 
   love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
   for x in range(0,LARGURA_TELA) do
