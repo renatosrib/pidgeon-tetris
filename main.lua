@@ -244,8 +244,9 @@ end
 
 function love.load()
   BORDA_DIREITA = love.graphics.getWidth()
-  pombo_direita = love.graphics.newImage( "imgs/rsz_pidgeon_right.jpg")
-  pombo_esquerda = love.graphics.newImage( "imgs/rsz_pidgeon_left.jpg")
+  pombo_direita = love.graphics.newImage( "imgs/rsz_pidgeon_right_4.jpg")
+  pombo_esquerda = love.graphics.newImage( "imgs/rsz_pidgeon_left_4.jpg")
+  som = love.audio.newSource("sound/LemGen_Ending.mp3")
   pombo.pombo = pombo_direita
 
   --desenha o delimitador no centro da tela
@@ -329,12 +330,11 @@ end
 
 function love.draw()
   if(vivo) then
+    som:play()
     if(modo == SOLTANDO_PECAS) then
       love.graphics.print("Peça atual: ",2,5,0,1,1)
       draw(1, 2, pombo.peca)
     end
-
-
     love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
     love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
     for x in range(0,LARGURA_TELA) do
