@@ -153,6 +153,24 @@ function desenha_plinv(x, y )
   GAME_GRID_TABELA:set_cell(x+1, y-1, 7)
 end
 
+function draw(x, y, peca)
+  if(peca == 1) then
+    desenha_f(x, y)
+  elseif(peca==2) then
+    desenha_s(x, y)
+  elseif(peca==3) then
+    desenha_5(x, y)
+  elseif(peca==4) then
+    desenha_traco(x, y)
+  elseif(peca==5) then
+    desenha_quadrado(x, y)
+  elseif(peca==6) then
+    desenha_Pl(x, y)
+  elseif(peca==7) then
+    desenha_plinv(x, y)
+  end
+end
+
 function limpar_pecas_esquerda()
   for current in range(2, 20, 5) do
     GAME_GRID_TABELA:set_cell(BORDA_PECAS,current,0)
@@ -311,6 +329,12 @@ end
 
 function love.draw()
   if(vivo) then
+    if(modo == SOLTANDO_PECAS) then
+      love.graphics.print("Peça atual: ",2,5,0,1,1)
+      draw(1, 2, pombo.peca)
+    end
+
+
     love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
     love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
     for x in range(0,LARGURA_TELA) do
