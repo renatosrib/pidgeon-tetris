@@ -23,7 +23,8 @@ LARGURA_PECA = 20
 ALTURA_PECA = 20
 METADE_DA_TELA_X = love.window.getWidth
 COR_DIVISOR_TELA = {255, 255, 255}
-COR_DE_FUNDO_PRETA = {0 , 0, 0, 0.5}
+COR_DE_FUNDO_PRETA = {0 , 0, 0, 0.5 }
+COR_DE_FUNDO_VERMELHA = {255 , 0, 0, 0.5}
 --[[a tabela abaixo representa as cores das pecas do jogo...]]--
 tetris.cores = {
   [1] = {215, 40, 40},
@@ -257,16 +258,17 @@ function love.update( dt )
           if(conteudoDaCelula ~= 0) then
             pombo.desceu = true
             pombo.peca = conteudoDaCelula
-            return
+            break
           else
             pombo.desceu = true
           end
         end
-        print(math.ceil(pombo.posy / 20))
       end
       limpar_pecas_esquerda()
       drawPieces()
+      print(pombo.peca)
       if(pombo.peca == null) then
+        modo = SOLTANDO_PECAS
         vivo = false
       else
         modo = SOLTANDO_PECAS
@@ -308,39 +310,44 @@ function love.update( dt )
 end
 
 function love.draw()
-  love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
-  love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
-  for x in range(0,LARGURA_TELA) do
-      for y in range(0, ALTURA_TELA) do
-        if GAME_GRID_TABELA:get_cell(x,y) == 1 then
-          love.graphics.setColor(tetris.cores[1])
-          love.graphics.rectangle("fill", y * 20 , x * 20 , LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 2 then
-          love.graphics.setColor(tetris.cores[2])
-          love.graphics.rectangle("fill", y * 20  , x * 20,LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 3 then
-          love.graphics.setColor(tetris.cores[3])
-          love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 4 then
-          love.graphics.setColor(tetris.cores[4])
-          love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 5 then
-          love.graphics.setColor(tetris.cores[5])
-          love.graphics.rectangle("fill", y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 6 then
-          love.graphics.setColor(tetris.cores[6])
-          love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == 7 then
-          love.graphics.setColor(tetris.cores[7])
-          love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
-        --desenha as partes delimitadoras
-        elseif GAME_GRID_TABELA:get_cell(x,y) == "_" then
-          love.graphics.setColor(COR_DIVISOR_TELA)
-          love.graphics.rectangle("line", x , y , 1, 1)
-        elseif GAME_GRID_TABELA:get_cell(x,y) == "|" then
-          love.graphics.setColor(COR_DIVISOR_TELA)
-          love.graphics.rectangle("line", x , y , 1, 1)
+  if(vivo) then
+    love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
+    love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
+    for x in range(0,LARGURA_TELA) do
+        for y in range(0, ALTURA_TELA) do
+          if GAME_GRID_TABELA:get_cell(x,y) == 1 then
+            love.graphics.setColor(tetris.cores[1])
+            love.graphics.rectangle("fill", y * 20 , x * 20 , LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 2 then
+            love.graphics.setColor(tetris.cores[2])
+            love.graphics.rectangle("fill", y * 20  , x * 20,LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 3 then
+            love.graphics.setColor(tetris.cores[3])
+            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 4 then
+            love.graphics.setColor(tetris.cores[4])
+            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 5 then
+            love.graphics.setColor(tetris.cores[5])
+            love.graphics.rectangle("fill", y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 6 then
+            love.graphics.setColor(tetris.cores[6])
+            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == 7 then
+            love.graphics.setColor(tetris.cores[7])
+            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+          --desenha as partes delimitadoras
+          elseif GAME_GRID_TABELA:get_cell(x,y) == "_" then
+            love.graphics.setColor(COR_DIVISOR_TELA)
+            love.graphics.rectangle("line", x , y , 1, 1)
+          elseif GAME_GRID_TABELA:get_cell(x,y) == "|" then
+            love.graphics.setColor(COR_DIVISOR_TELA)
+            love.graphics.rectangle("line", x , y , 1, 1)
+          end
         end
-      end
+    end
+  else
+    love.graphics.setBackgroundColor(COR_DE_FUNDO_VERMELHA)
+    love.graphics.print("Você perdeu!",280,250,0,3,3)
   end
 end
