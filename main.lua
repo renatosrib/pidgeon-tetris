@@ -151,43 +151,6 @@ function desenha_plinv(x, y )
   GAME_GRID_TABELA:set_cell(x,y+1, 5)
   GAME_GRID_TABELA:set_cell(x, y-1, 5)
   GAME_GRID_TABELA:set_cell(x+1, y-1, 5)
-
-end
-
---Variaveis de controle do jogo
---[[tabela representa o local no qual as peças se posicionam...]]--
-tetris.tabela = {}
-
-function range(from, to, step)
-  step = step or 1
-  return function(_, lastvalue)
-    local nextvalue = lastvalue + step
-    if step > 0 and nextvalue <= to or step < 0 and nextvalue >= to or
-       step == 0
-    then
-      return nextvalue
-    end
-  end, nil, from - step
-end
-
-function love.load()
-  BORDA_DIREITA = love.graphics.getWidth()
-  pombo_direita = love.graphics.newImage( "imgs/rsz_pidgeon_right.jpg")
-  pombo_esquerda = love.graphics.newImage( "imgs/rsz_pidgeon_left.jpg")
-  pombo.pombo = pombo_direita
-
-  --desenha o delimitador no centro da tela
-  for y in range(130, LARGURA_TELA) do
-    GAME_GRID_TABELA:set_cell(LARGURA_TELA /2 , y , "|")
-  end
-
-  --DESENHA A PARTE NA QUAL AS PEÇAS "REPOUSAM"
-  for x in range(0, LARGURA_TELA/2) do
-    GAME_GRID_TABELA:set_cell(x, ALTURA_TELA*0.3, "_")
-  end
-  drawPieces()
-
-
 end
 
 function drawPieces()
@@ -208,14 +171,65 @@ function drawPieces()
     elseif peca == tetris.pecas[7] then
       desenha_Pl(BORDA_PECAS, current)
     end
+  end
+end
 
+function get_random_piece()
+  return tetris.pecas[math.random(1,7)]
+end
+
+
+function efeito_queda_livre_peca()
+  for x in range(0,LARGURA_TELA) do
+    for y in range(0, ALTURA_TELA) do
+      if GAME_GRID_TABELA:get_cell(x,y) == 1 then
+        --limpa a celula anterior
+        GAME_GRID_TABELA:set_cell(x, y, 0)
+
+        GAME_GRID_TABELA:set_cell(x ,y, 1)
+      end
+    end
   end
 end
 
 
 
-function get_random_piece()
-  return tetris.pecas[math.random(1,7)]
+--Variaveis de controle do jogo
+--[[tabela representa o local no qual as peças se posicionam...]]--
+tetris.tabela = {}
+
+function range(from, to, step)
+  step = step or 1
+  return function(_, lastvalue)
+    local nextvalue = lastvalue + step
+    if step > 0 and nextvalue <= to or step < 0 and nextvalue >= to or
+       step == 0
+    then
+      return nextvalue
+    end
+  end, nil, from - step
+end
+
+
+
+function love.load()
+  BORDA_DIREITA = love.graphics.getWidth()
+  pombo_direita = love.graphics.newImage( "imgs/rsz_pidgeon_right.jpg")
+  pombo_esquerda = love.graphics.newImage( "imgs/rsz_pidgeon_left.jpg")
+  pombo.pombo = pombo_direita
+
+  --desenha o delimitador no centro da tela
+  for y in range(130, LARGURA_TELA) do
+    GAME_GRID_TABELA:set_cell(LARGURA_TELA /2 , y , "|")
+  end
+
+  --DESENHA A PARTE NA QUAL AS PEÇAS "REPOUSAM"
+  for x in range(0, LARGURA_TELA/2) do
+    GAME_GRID_TABELA:set_cell(x, ALTURA_TELA*0.3, "_")
+  end
+  drawPieces()
+
+
 end
 
 function love.update( dt )
@@ -250,23 +264,8 @@ function love.update( dt )
 
 end
 
-function efeito_queda_livre_peca()
-  for x in range(0,LARGURA_TELA) do
-      for y in range(0, ALTURA_TELA) do
-        if GAME_GRID_TABELA:get_cell(x,y) == 1 then
-            --limpa a celula anterior
-            GAME_GRID_TABELA:set_cell(x, y, 0)
-
-            GAME_GRID_TABELA:set_cell(x ,y, 1)
-        end
-      end
-  end
-end
-
-
 function love.draw()
   love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
-
   love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
   for x in range(0,LARGURA_TELA) do
       for y in range(0, ALTURA_TELA) do
