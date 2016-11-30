@@ -14,11 +14,12 @@ ESQUERDA = "esquerda"
 BORDA_DIRETA = love.graphics.getWidth()
 BORDA_CENTRAL = 400
 BORDA_ESQUERDA = 0
-BORDA_PECAS = 8
+BORDA_PECAS = ALTURA_TELA*0.3
 --incremento
 velocidade = 2
 SOLTANDO_PECAS = "TETRIS"
 PEGANDO_PECAS = "PECAS"
+DESCENDO = "DESCENDO"
 LARGURA_PECA = 20
 ALTURA_PECA = 20
 METADE_DA_TELA_X = love.window.getWidth
@@ -34,6 +35,12 @@ tetris.cores = {
   [5] = {128, 128, 0 },
   [6] = {128, 0, 128 },
   [7] = {128, 128, 128}
+}
+
+pombostatus = {
+  voando = "voando",
+  descendo = "descendo",
+  acido = "acido"
 }
 
 PF = {
@@ -83,7 +90,7 @@ tetris.pecas = {
 
 --Informações de posição em relação ao pombo
 pombo = {
-  desceu = false,
+  status = pombostatus.voando,
   pombo = null,
   posx = 300,
   posy = 0,
@@ -92,7 +99,6 @@ pombo = {
   offset = 0,
   direcao = DIREITA,
   peca = null,
-  tempoPavaVoarNovamente = 0
 }
 
 --Frames
@@ -104,25 +110,25 @@ modo = PEGANDO_PECAS
 
 function desenha_f(x, y)
   GAME_GRID_TABELA:set_cell(x,y,1)
-  GAME_GRID_TABELA:set_cell(x,y-1, 1)
-  GAME_GRID_TABELA:set_cell(x, y+1, 1)
-  GAME_GRID_TABELA:set_cell(x-1, y, 1)
+  GAME_GRID_TABELA:set_cell(x,y-20, 1)
+  GAME_GRID_TABELA:set_cell(x, y+20, 1)
+  GAME_GRID_TABELA:set_cell(x-20, y, 1)
 end
 
 function desenha_s(x, y)
   GAME_GRID_TABELA:set_cell(x,y,2)
-  GAME_GRID_TABELA:set_cell(x,y-1, 2)
-  GAME_GRID_TABELA:set_cell(x+1, y-1, 2)
-  GAME_GRID_TABELA:set_cell(x+1, y-2, 2)
+  GAME_GRID_TABELA:set_cell(x,y-20, 2)
+  GAME_GRID_TABELA:set_cell(x+20, y-20, 2)
+  GAME_GRID_TABELA:set_cell(x+20, y-40, 2)
 end
 
 function desenha_5(x, y)
 --    { 2, 2, 0 },
 --    { 0, 2, 2 }
   GAME_GRID_TABELA:set_cell(x,y,3)
-  GAME_GRID_TABELA:set_cell(x,y+1, 3)
-  GAME_GRID_TABELA:set_cell(x+1, y+2, 3)
-  GAME_GRID_TABELA:set_cell(x+1, y+1, 3)
+  GAME_GRID_TABELA:set_cell(x,y+20, 3)
+  GAME_GRID_TABELA:set_cell(x+20, y+40, 3)
+  GAME_GRID_TABELA:set_cell(x+20, y+20, 3)
 end
 
 function desenha_traco(x, y)
@@ -153,7 +159,7 @@ function desenha_plinv(x, y )
   GAME_GRID_TABELA:set_cell(x+1, y-1, 7)
 end
 
-function draw(x, y, peca)
+function desenhar(x, y, peca)
   if(peca == 1) then
     desenha_f(x, y)
   elseif(peca==2) then
@@ -172,7 +178,7 @@ function draw(x, y, peca)
 end
 
 function limpar_pecas_esquerda()
-  for current in range(2, 20, 5) do
+  for current in range(0, 20, 5) do
     GAME_GRID_TABELA:set_cell(BORDA_PECAS,current,0)
     GAME_GRID_TABELA:set_cell(BORDA_PECAS + 1,current,0)
     GAME_GRID_TABELA:set_cell(BORDA_PECAS - 1,current,0)
@@ -183,29 +189,29 @@ function limpar_pecas_esquerda()
   end
 end
 
-function drawPieces()
-  for current in range(2, 20, 5) do
+function desenharPecasAcido()
+  for current in range(100, 300, 100) do
     peca = get_random_piece()
     if peca == tetris.pecas[1] then
-      desenha_f(BORDA_PECAS,current)
+      desenha_f(ALTURA_TELA*0.3,current)
     elseif peca == tetris.pecas[2] then
-      desenha_s(BORDA_PECAS, current)
+      desenha_s(ALTURA_TELA*0.3, current)
     elseif peca == tetris.pecas[3] then
-      desenha_5(BORDA_PECAS, current)
+      desenha_5(ALTURA_TELA*0.3, current)
     elseif peca == tetris.pecas[4] then
-      desenha_traco(BORDA_PECAS, current)
+      desenha_traco(ALTURA_TELA*0.3, current)
     elseif peca == tetris.pecas[5] then
-      desenha_quadrado(BORDA_PECAS, current)
+      desenha_quadrado(ALTURA_TELA*0.3, current)
     elseif peca == tetris.pecas[6] then
-      desenha_Pl(BORDA_PECAS, current)
+      desenha_Pl(ALTURA_TELA*0.3, current)
     elseif peca == tetris.pecas[7] then
-      desenha_plinv(BORDA_PECAS, current)
+      desenha_plinv(ALTURA_TELA*0.3, current)
     end
   end
 end
 
 function get_random_piece()
-  return tetris.pecas[math.random(1,7)]
+  return tetris.pecas[2]
 end
 
 
@@ -249,6 +255,12 @@ function love.load()
   som = love.audio.newSource("sound/LemGen_Ending.mp3")
   pombo.pombo = pombo_direita
 
+  for x in range(0,LARGURA_TELA) do
+    for y in range(0, ALTURA_TELA) do
+      GAME_GRID_TABELA:set_cell(x , y , "0")
+    end
+  end
+
   --desenha o delimitador no centro da tela
   for y in range(130, LARGURA_TELA) do
     GAME_GRID_TABELA:set_cell(LARGURA_TELA /2 , y , "|")
@@ -258,7 +270,7 @@ function love.load()
   for x in range(0, LARGURA_TELA/2) do
     GAME_GRID_TABELA:set_cell(x, ALTURA_TELA*0.3, "_")
   end
-  drawPieces()
+  desenharPecasAcido()
 
 
 end
@@ -266,64 +278,99 @@ end
 function love.update( dt )
   dtg = dt
   if(vivo) then
-    --Caso o usuário pressione espaço o pombo sobe um pouco
-    if(love.keyboard.isDown("space") and modo == PEGANDO_PECAS) then
-      if(math.fmod(dt * 1000000, velocidade) <= 2 and pombo.desceu == false) then
-        pombo.angulo = 1
-        for y in range(0, 40) do
-          pombo.posy = pombo.posy + 1
-          conteudoDaCelula = GAME_GRID_TABELA:get_cell(math.ceil(pombo.posx / 20), math.ceil(pombo.posy / 20))
-          print(conteudoDaCelula)
-          if(conteudoDaCelula ~= 0) then
-            pombo.desceu = true
-            pombo.peca = conteudoDaCelula
-            break
-          else
-            pombo.desceu = true
-          end
-        end
-      end
-      limpar_pecas_esquerda()
-      drawPieces()
-      print(pombo.peca)
-      if(pombo.peca == null) then
-        modo = SOLTANDO_PECAS
-        vivo = false
-      else
-        modo = SOLTANDO_PECAS
-      end
-    end
-    --Faz o movimento do pombo para a DIREITA ou para a ESQUERDA
-    if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.direcao == DIREITA) then
-      pombo.posx = pombo.posx + velocidade
-    else
-      pombo.posx = pombo.posx - velocidade
-    end
-
     if(modo == PEGANDO_PECAS) then
+      --Faz o movimento do pombo para a DIREITA ou para a ESQUERDA
+      if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.direcao == DIREITA) then
+        pombo.posx = pombo.posx + velocidade
+      else
+        pombo.posx = pombo.posx - velocidade
+      end
+
       --Troca a direção do pombo para a esquerda caso ele alcance a borda direita
       if (pombo.posx >= (BORDA_CENTRAL - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
         pombo.pombo = pombo_esquerda
         pombo.direcao = ESQUERDA
       end
-    --Troca a direção do pombo para a direita caso ele alcance a borda esquerda
+      --Troca a direção do pombo para a direita caso ele alcance a borda esquerda
       if (pombo.posx <= BORDA_ESQUERDA and pombo.direcao == ESQUERDA) then
         pombo.pombo = pombo_direita
         pombo.direcao = DIREITA
       end
+      if(love.keyboard.isDown("space")) then
+        pombo.status = pombostatus.descendo
+        modo = DESCENDO
+      end
     end
-  end
-  if(modo == SOLTANDO_PECAS) then
-    pombo.angulo = 0
-    --Troca a direção do pombo para a esquerda caso ele alcance a borda direita
-    if (pombo.posx >= (BORDA_DIRETA - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
-      pombo.pombo = pombo_esquerda
-      pombo.direcao = ESQUERDA
+
+    if(modo == DESCENDO) then
+      --print("dt",math.ceil(math.fmod(dt * 1000000, 3)))
+      if(math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.status == pombostatus.descendo) then
+--        print("posy %s", pombo.posy)
+--        print("posx %s", pombo.posx)
+        if(pombo.posy <= BORDA_PECAS + 1 - pombo_direita:getWidth()) then
+          if(pombo.direcao == DIREITA) then
+            pombo.angulo = 0.5
+            pombo.posy = pombo.posy + 1
+            pombo.posx = pombo.posx + 1
+          else
+            pombo.angulo = 1
+            pombo.posy = pombo.posy + 1
+            pombo.posx = pombo.posx - 1
+          end
+          if(pombo.posx == BORDA_PECAS - pombo_direita:getWidth()) then
+            print("posx>", pombo.posx)
+            print("posy", pombo.posy)
+            print("table",GAME_GRID_TABELA:get_cell(BORDA_PECAS, 100))
+            celula = GAME_GRID_TABELA:get_cell(BORDA_PECAS, 100)
+            if(celula ~= 0 and celula ~= nil) then
+              conteudoDaCelula = celula
+            end
+          end
+        else
+          if(conteudoDaCelula ~= nil and conteudoDaCelula ~= 0) then
+            print(conteudoDaCelula)
+            pombo.status = pombostatus.voando
+            pombo.peca = conteudoDaCelula
+          else
+            pombo.status = pombostatus.acido
+          end
+
+          if(pombo.status == pombostatus.acido) then
+            if(pombo.peca == null) then
+              modo = SOLTANDO_PECAS
+              vivo = false
+            end
+          else
+            print("ok")
+            limpar_pecas_esquerda()
+            desenharPecasAcido()
+            modo = SOLTANDO_PECAS
+          end
+        end
+      end
+
     end
-    --Troca a direção do pombo para a direita caso ele alcance a borda esquerda
-    if (pombo.posx <= BORDA_CENTRAL and pombo.direcao == ESQUERDA) then
-      pombo.pombo = pombo_direita
-      pombo.direcao = DIREITA
+
+    if(modo == SOLTANDO_PECAS) then
+      print("soltando peca")
+      --Faz o movimento do pombo para a DIREITA ou para a ESQUERDA
+      if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.direcao == DIREITA) then
+        pombo.posx = pombo.posx + velocidade
+      else
+        pombo.posx = pombo.posx - velocidade
+      end
+
+      pombo.angulo = 0
+      --Troca a direção do pombo para a esquerda caso ele alcance a borda direita
+      if (pombo.posx >= (BORDA_DIRETA - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
+        pombo.pombo = pombo_esquerda
+        pombo.direcao = ESQUERDA
+      end
+      --Troca a direção do pombo para a direita caso ele alcance a borda esquerda
+      if (pombo.posx <= BORDA_CENTRAL and pombo.direcao == ESQUERDA) then
+        pombo.pombo = pombo_direita
+        pombo.direcao = DIREITA
+      end
     end
   end
 end
@@ -333,7 +380,7 @@ function love.draw()
     som:play()
     if(modo == SOLTANDO_PECAS) then
       love.graphics.print("Peça atual: ",2,5,0,1,1)
-      draw(1, 2, pombo.peca)
+      desenhar(1, 2, pombo.peca)
     end
     love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
     love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
@@ -341,25 +388,25 @@ function love.draw()
         for y in range(0, ALTURA_TELA) do
           if GAME_GRID_TABELA:get_cell(x,y) == 1 then
             love.graphics.setColor(tetris.cores[1])
-            love.graphics.rectangle("fill", y * 20 , x * 20 , LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill", y , x , LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 2 then
             love.graphics.setColor(tetris.cores[2])
-            love.graphics.rectangle("fill", y * 20  , x * 20,LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill", y  , x,LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 3 then
             love.graphics.setColor(tetris.cores[3])
-            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill",y, x, LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 4 then
             love.graphics.setColor(tetris.cores[4])
-            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill",y , x, LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 5 then
             love.graphics.setColor(tetris.cores[5])
-            love.graphics.rectangle("fill", y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill", y , x, LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 6 then
             love.graphics.setColor(tetris.cores[6])
-            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill",y , x, LARGURA_PECA, ALTURA_PECA)
           elseif GAME_GRID_TABELA:get_cell(x,y) == 7 then
             love.graphics.setColor(tetris.cores[7])
-            love.graphics.rectangle("fill",y * 20 , x * 20, LARGURA_PECA, ALTURA_PECA)
+            love.graphics.rectangle("fill", y, x, LARGURA_PECA, ALTURA_PECA)
           --desenha as partes delimitadoras
           elseif GAME_GRID_TABELA:get_cell(x,y) == "_" then
             love.graphics.setColor(COR_DIVISOR_TELA)
@@ -371,6 +418,7 @@ function love.draw()
         end
     end
   else
+    som:stop()
     love.graphics.setBackgroundColor(COR_DE_FUNDO_VERMELHA)
     love.graphics.print("Você perdeu!",280,250,0,3,3)
   end
