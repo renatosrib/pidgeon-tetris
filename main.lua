@@ -133,30 +133,30 @@ end
 
 function desenha_traco(x, y)
   GAME_GRID_TABELA:set_cell(x,y,4)
-  GAME_GRID_TABELA:set_cell(x,y-1, 4)
-  GAME_GRID_TABELA:set_cell(x, y-2, 4)
-  GAME_GRID_TABELA:set_cell(x, y+1, 4)
+  GAME_GRID_TABELA:set_cell(x,y-20, 4)
+  GAME_GRID_TABELA:set_cell(x, y-40, 4)
+  GAME_GRID_TABELA:set_cell(x, y+20, 4)
 end
 
 function desenha_quadrado(x, y)
   GAME_GRID_TABELA:set_cell(x,y,5)
-  GAME_GRID_TABELA:set_cell(x,y+1, 5)
-  GAME_GRID_TABELA:set_cell(x+1, y, 5)
-  GAME_GRID_TABELA:set_cell(x+1, y+1, 5)
+  GAME_GRID_TABELA:set_cell(x,y+20, 5)
+  GAME_GRID_TABELA:set_cell(x+20, y, 5)
+  GAME_GRID_TABELA:set_cell(x+20, y+20, 5)
 end
 
 function desenha_Pl(x, y)
   GAME_GRID_TABELA:set_cell(x,y,6)
-  GAME_GRID_TABELA:set_cell(x,y+1, 6)
-  GAME_GRID_TABELA:set_cell(x, y-1, 6)
-  GAME_GRID_TABELA:set_cell(x+1, y+1, 6)
+  GAME_GRID_TABELA:set_cell(x,y+20, 6)
+  GAME_GRID_TABELA:set_cell(x, y-20, 6)
+  GAME_GRID_TABELA:set_cell(x+20, y+20, 6)
 end
 
 function desenha_plinv(x, y )
   GAME_GRID_TABELA:set_cell(x,y,7)
-  GAME_GRID_TABELA:set_cell(x,y+1, 7)
-  GAME_GRID_TABELA:set_cell(x, y-1, 7)
-  GAME_GRID_TABELA:set_cell(x+1, y-1, 7)
+  GAME_GRID_TABELA:set_cell(x,y+20, 7)
+  GAME_GRID_TABELA:set_cell(x, y-20, 7)
+  GAME_GRID_TABELA:set_cell(x+20, y-20, 7)
 end
 
 function desenhar(x, y, peca)
@@ -177,21 +177,43 @@ function desenhar(x, y, peca)
   end
 end
 
-function limpar_pecas_esquerda()
-  for current in range(0, 20, 5) do
+function limparPecasEsquerda()
+  for current in range(100, 300, 100) do
     GAME_GRID_TABELA:set_cell(BORDA_PECAS,current,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS + 1,current,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS - 1,current,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current +1,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current -1,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS +1,current +1,0)
-    GAME_GRID_TABELA:set_cell(BORDA_PECAS -1,current -1,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS + 20,current,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS - 20,current,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS + 40,current,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS - 40,current,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current +20,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current -20,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current +40,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS,current -40,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS +20,current +20,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS -20,current -20,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS +40,current +20,0)
+    GAME_GRID_TABELA:set_cell(BORDA_PECAS -40,current -20,0)
   end
 end
 
+function limparPecaSelecionada()
+  GAME_GRID_TABELA:set_cell(20,40,0)
+  GAME_GRID_TABELA:set_cell(20 + 20,40,0)
+  GAME_GRID_TABELA:set_cell(20 - 20,40,0)
+  GAME_GRID_TABELA:set_cell(20 + 40,40,0)
+  GAME_GRID_TABELA:set_cell(20 - 40,40,0)
+  GAME_GRID_TABELA:set_cell(20,40 +20,0)
+  GAME_GRID_TABELA:set_cell(20,40 -20,0)
+  GAME_GRID_TABELA:set_cell(20,40 +40,0)
+  GAME_GRID_TABELA:set_cell(20,40 -40,0)
+  GAME_GRID_TABELA:set_cell(20 +20,40 +20,0)
+  GAME_GRID_TABELA:set_cell(20 -20,40 -20,0)
+  GAME_GRID_TABELA:set_cell(20 +40,40 +20,0)
+  GAME_GRID_TABELA:set_cell(20 -40,40 -20,0)
+end
+
 function desenharPecasAcido()
+  peca = gerarPecaRandomica()
   for current in range(100, 300, 100) do
-    peca = get_random_piece()
     if peca == tetris.pecas[1] then
       desenha_f(ALTURA_TELA*0.3,current)
     elseif peca == tetris.pecas[2] then
@@ -210,8 +232,8 @@ function desenharPecasAcido()
   end
 end
 
-function get_random_piece()
-  return tetris.pecas[2]
+function gerarPecaRandomica()
+  return tetris.pecas[math.random(1, 7)]
 end
 
 
@@ -296,17 +318,14 @@ function love.update( dt )
         pombo.pombo = pombo_direita
         pombo.direcao = DIREITA
       end
-      if(love.keyboard.isDown("space")) then
+      if(love.keyboard.isDown("space") and pombo.posx <= BORDA_CENTRAL) then
         pombo.status = pombostatus.descendo
         modo = DESCENDO
       end
     end
 
     if(modo == DESCENDO) then
-      --print("dt",math.ceil(math.fmod(dt * 1000000, 3)))
       if(math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.status == pombostatus.descendo) then
---        print("posy %s", pombo.posy)
---        print("posx %s", pombo.posx)
         if(pombo.posy <= BORDA_PECAS + 1 - pombo_direita:getWidth()) then
           if(pombo.direcao == DIREITA) then
             pombo.angulo = 0.5
@@ -320,8 +339,17 @@ function love.update( dt )
           if(pombo.posx == BORDA_PECAS - pombo_direita:getWidth()) then
             print("posx>", pombo.posx)
             print("posy", pombo.posy)
-            print("table",GAME_GRID_TABELA:get_cell(BORDA_PECAS, 100))
-            celula = GAME_GRID_TABELA:get_cell(BORDA_PECAS, 100)
+            if(pombo.posy < 170) then
+              print("pombo.posy", pombo.posy)
+              posicao = 100
+            elseif(pombo.posy >= 170 and pombo.posy < 250) then
+              print('200')
+              posicao = 200
+            elseif (pombo.posy >= 250) then
+              print('300')
+              posicao = 300
+            end
+            celula = GAME_GRID_TABELA:get_cell(BORDA_PECAS, posicao)
             if(celula ~= 0 and celula ~= nil) then
               conteudoDaCelula = celula
             end
@@ -341,8 +369,7 @@ function love.update( dt )
               vivo = false
             end
           else
-            print("ok")
-            limpar_pecas_esquerda()
+            limparPecasEsquerda()
             desenharPecasAcido()
             modo = SOLTANDO_PECAS
           end
@@ -352,14 +379,16 @@ function love.update( dt )
     end
 
     if(modo == SOLTANDO_PECAS) then
-      print("soltando peca")
+      --Sobe até chegar novamente ao topo
+      if (pombo.posy > 0) then
+        pombo.posy = pombo.posy - 2
+      end
       --Faz o movimento do pombo para a DIREITA ou para a ESQUERDA
       if (math.fmod(dt * 1000, 2) >= 0 and math.fmod(dt * 1000000, velocidade) <= 2 and pombo.direcao == DIREITA) then
         pombo.posx = pombo.posx + velocidade
       else
         pombo.posx = pombo.posx - velocidade
       end
-
       pombo.angulo = 0
       --Troca a direção do pombo para a esquerda caso ele alcance a borda direita
       if (pombo.posx >= (BORDA_DIRETA - pombo_direita:getWidth()) and pombo.direcao == DIREITA) then
@@ -371,6 +400,13 @@ function love.update( dt )
         pombo.pombo = pombo_direita
         pombo.direcao = DIREITA
       end
+
+      if(love.keyboard.isDown("space") and pombo.posx >= BORDA_CENTRAL) then
+        pombo.peca = nil
+        pombo.status = pombostatus.voando
+        limparPecaSelecionada()
+        modo = PEGANDO_PECAS
+      end
     end
   end
 end
@@ -380,7 +416,7 @@ function love.draw()
     som:play()
     if(modo == SOLTANDO_PECAS) then
       love.graphics.print("Peça atual: ",2,5,0,1,1)
-      desenhar(1, 2, pombo.peca)
+      desenhar(20, 40, pombo.peca)
     end
     love.graphics.setBackgroundColor(COR_DE_FUNDO_PRETA)
     love.graphics.draw(pombo.pombo, pombo.posx, pombo.posy, pombo.angulo, pombo.tamanho, pombo.tamanho, pombo.offset, pombo.offset)
